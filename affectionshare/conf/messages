@@ -1,0 +1,5 @@
+# https://www.playframework.com/documentation/latest/ScalaI18N
+info.category.update=カテゴリーの更新が完了しました。
+error.category.update=カテゴリーの更新に失敗しました。
+info.category.delete=カテゴリーの削除が完了しました。
+error.category.delete=カテゴリーの削除に失敗しました。

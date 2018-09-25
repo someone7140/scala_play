@@ -1,0 +1,14 @@
+@(userdisplay: String , usercategory:Int)
+@import helper._
+@import commonlogic.logicservice.UserService
+@main("恋愛投稿"){
+    <font size=5>■最新投稿確認画面@userdisplay</font><br/><br/>
+
+       @common.headerMenu()
+       @if(usercategory == UserService.ADMIN_USER) {
+          @common.headerMenuAdmin()
+          <br/>
+       }
+       <br/>
+
+}

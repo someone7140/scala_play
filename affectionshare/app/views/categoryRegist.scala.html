@@ -1,0 +1,33 @@
+@(categoryForm : Form[Category] , userdisplay: String , categoryId: String , registMessage:String)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@import helper._
+@main("恋愛投稿"){
+    @if(categoryId != "") {
+        <font size=5>■カテゴリー変更画面@userdisplay</font><br/><br/>
+    }else{
+        <font size=5>■カテゴリー追加画面@userdisplay</font><br/><br/>
+    }
+    
+    @helper.form( action = helper.CSRF(routes.CategoryController.categorySubmit) ){
+
+        <fieldset>
+          @helper.inputText(categoryForm("categoryname") , '_label -> "カテゴリー名")
+          @helper.inputText(categoryForm("categorysort") , '_label -> "ソート番号")
+        </fieldset>
+        <input type="hidden" value="@categoryForm("categoryid").value" name="categoryid">
+        
+        
+        @if(categoryId != "") {
+            <input type="submit" value="変更する">
+        }else{
+            <input type="submit" value="カテゴリー追加">
+        }
+        
+    
+    }
+    
+    @if(registMessage != "") {
+        @registMessage
+        <br/>
+    }
+    <br/><a href="./categorylist">カテゴリーの一覧へ戻る場合はこちらから</a>
+}

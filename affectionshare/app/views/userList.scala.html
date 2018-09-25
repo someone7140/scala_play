@@ -1,0 +1,42 @@
+
+@import helper._
+@import commonlogic.logicservice.UserService
+@import commonlogic.logicservice.viewmodel.UserForList
+@(userdisplay: String , usercategory: Int  , userList: List[UserForList])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@main("恋愛投稿"){
+    <font size=5>■ユーザ一覧画面@userdisplay</font><br/><br/>
+
+       @common.headerMenu()
+       @if(usercategory == UserService.ADMIN_USER) {
+          @common.headerMenuAdmin()
+       }
+       <br/>
+       
+       <a href="./useraddForAdmin">ユーザの新規追加はこちらから</a>
+       <br/>
+       <table border = "1">
+       <tr bgcolor ="aqua">
+           <td>ユーザID</td><td>ユーザ名</td><td>ユーザ区分</td><td>最終ログオン日</td><td>変更リンク</td>
+       </tr>
+           @for(user <- userList){
+               <tr>
+                   <td>
+                       @user.userid
+                   </td>
+                   <td>
+                       @user.username
+                   </td>
+                   <td>
+                       @user.usercategory
+                   </td>
+                   <td>
+                       @user.lastlogin
+                   </td>
+                   <td>
+                       <a href = "./userChageForAdmin?userIdParam=@user.userid">変更する</a>
+                   </td>
+               </tr>
+           }
+       </table>
+
+}

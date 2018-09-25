@@ -1,0 +1,74 @@
+@(userForm : Form[UserForRegist]  , userdisplay: String , usercategory: Int , registCategory: Int , registMessage:String)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@import helper._
+@import commonlogic.logicservice.UserService
+@main("恋愛投稿"){
+    @if(registCategory == 1) {
+        <font size=5>■ユーザ変更画面@userdisplay</font><br/><br/>
+    }else{
+        <font size=5>■ユーザ追加画面@userdisplay</font><br/><br/>
+    }
+    
+    @helper.form( action = helper.CSRF(routes.UserSetingController.userRegistSubmit) ){
+        <input type="hidden" value=@registCategory name="registCategory">
+        
+        <fieldset>
+          @if(registCategory == 1) {
+             ユーザID：@userForm("userid").value
+             <input type="hidden" value="@userForm("userid").value" name="userid">
+             <br/>
+          }else{
+             @helper.inputText(userForm("userid") , '_label -> "ユーザID")
+          }
+          @if(registCategory == 1 && usercategory == UserService.ADMIN_USER) {
+             ユーザ名称：@userForm("username").value
+             <input type="hidden" value="@userForm("username").value" name="username">
+             <br/>
+          }else{
+             @helper.inputText(userForm("username") , '_label -> "ユーザ名称")
+          }
+          
+          @helper.inputPassword(userForm("userpw") , '_label -> "パスワード")
+          @if(usercategory == UserService.ADMIN_USER) {
+            @inputRadioGroup(userForm("usercategory"), options = Seq(UserService.COMMON_USER.toString->UserService.COMMON_USER_NAME,
+                                                                     UserService.ADMIN_USER.toString->UserService.ADMIN_USER_NAME,
+                                                                     UserService.STOP_USER.toString->UserService.STOP_USER_NAME) ,
+                                                                     '_label -> "ユーザ区分",
+                                                                     '_error -> userForm("usercategory").error.map(_.withMessage("ユーザ区分を選択してください"))
+                            )
+          }
+          @if(registCategory == 0 || usercategory == UserService.COMMON_USER) {
+            @inputRadioGroup(userForm("gender"), options = Seq(UserService.GENDER_MALE->UserService.GENDER_MALE_NAME,
+                                                               UserService.GENDER_FEMALE->UserService.GENDER_FEMALE_NAME),
+                                                               '_label -> "性別",
+                                                               '_error -> userForm("gender").error.map(_.withMessage("性別を選択してください"))
+                             )
+            @helper.inputText(userForm("email") , '_label -> "email")
+            @helper.inputText(userForm("lineid") , '_label -> "lineid")
+            @helper.inputText(userForm("telephone") , '_label -> "電話番号")
+            @helper.inputDate(userForm("birhtdate") , '_label -> "誕生日")
+          }
+
+        </fieldset>
+        
+        
+        
+        @if(registCategory == 1) {
+            <input type="submit" value="変更する">
+        }else{
+            <input type="submit" value="ユーザ追加">
+        }
+        
+    
+    }
+    
+    @if(registMessage != "") {
+        @registMessage
+        <br/>
+    }
+    @if(usercategory == UserService.ADMIN_USER) {
+       <br/><a href="./userList">ユーザの一覧へ戻る場合はこちらから</a>
+    }else{
+       <br/><a href="./affectionTop">TOPへ戻る</a>
+    }
+
+}

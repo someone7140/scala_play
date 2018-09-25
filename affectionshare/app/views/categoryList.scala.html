@@ -1,0 +1,49 @@
+
+@import helper._
+@import commonlogic.logicservice.UserService
+@import commonlogic.logicservice.CategoryService
+@import commonlogic.logicservice.viewmodel.CategoryForList
+@(userdisplay: String , categoryList: List[CategoryForList] , usercategory:Int , deleteMessage: String)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@main("恋愛投稿"){
+    <script src="@routes.Assets.versioned("javascripts/lib/jquery-3.3.1.min.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.versioned("javascripts/categoryDelete.js")" type="text/javascript"></script>
+    <font size=5>■カテゴリー一覧画面@userdisplay</font><br/><br/>
+
+       @common.headerMenu()
+       @if(usercategory == UserService.ADMIN_USER) {
+          @common.headerMenuAdmin()
+       }
+       <br/>
+       
+       @if(deleteMessage != "") {
+        @deleteMessage
+        <br/>
+       }
+       <a href="./categoryregist">カテゴリーの新規追加はこちらから</a>
+       <br/>
+       <table border = "1">
+       <tr bgcolor ="aqua">
+           <td>カテゴリー名</td><td>更新日</td><td>変更リンク</td><td>削除ボタン</td>
+       </tr>
+           @for(category <- categoryList){
+               <tr>
+                   <td>
+                       @category.categoryname
+                   </td>
+                   <td>
+                       @category.lastupdate
+                   </td>
+                   <td>
+                       <a href = "./categoryregist?categoryIdParam=@category.categoryid">変更する</a>
+                   </td>
+                   <td>
+                       @helper.form( action = helper.CSRF(routes.CategoryController.categoryDelete) , 'class -> "categorydeleteform"){
+                          <input type = "hidden" name = "categoryIdParam" value="@category.categoryid" />
+                          <input type = "submit" value="削除する">
+                       }
+                   </td>
+               </tr>
+           }
+       </table>
+
+}
