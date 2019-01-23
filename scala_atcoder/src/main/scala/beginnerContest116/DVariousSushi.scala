@@ -1,7 +1,8 @@
 package beginnerContest116
 
-// https://atcoder.jp/contests/abc116/tasks/abc116_d
+import scala.util.control.Breaks
 
+// https://atcoder.jp/contests/abc116/tasks/abc116_d
 object DVariousSushi extends App {
   var nk = scala.io.StdIn.readLine()
   var nkInt =  nk.split(" ").map(_.toInt)
@@ -18,40 +19,40 @@ object DVariousSushi extends App {
   for(i<-0 to n -1){
     val td = scala.io.StdIn.readLine()
     val tdInt =  td.split(" ").map(_.toInt)
-    seqTd :+= (tdInt(0), tdInt(1))
+    seqTd = (tdInt(0), tdInt(1)) +: seqTd
   }
+  // ポイントでソート
   seqTd = seqTd.sortBy(_._2).reverse
-  var maxSeq = Seq.empty[(Int, Int)]
-
+  var maxSeq = Seq.empty[(Int, Int)]]
+  
+  // まずは最大値ポイントでリストを作成
   for(i<-0 to k - 1){
-    // 最大値のリストを取得
-    val maxValueSeq = seqTd.filter(_._2 == seqTd(0)._2)
-    // 種類が違うのがあるか
-    val maxVariableAndValue = maxValueSeq.find(m =>
-      maxSeq.filter(_._1 == m._1).isEmpty
+    maxSeq = m +: seqTd(0)
+    seqTd =  seqTd.tail
+  }
+  var maxPoint = calculatePoint(maxSeq)
+  
+  // 種類が違うリストを作る。
+  differenceKindSeq = seqTd.filter(s =>
+    maxSeq.find(_._1 == s._1).isEmpty
+  )
+  differenceKindSeq.sortBy(_._2).reverse
+  
+  val b = new Breaks
+  
+  differenceKindSeq.foreach { ds =>
+    // 同種類が2レコード以上の種類リスト
+    val duplicateKindKeySeq = maxSeq.groupBy(_._1).map(dm =>
+      
+    
     )
-    maxVariableAndValue match {
-      case Some(m) =>
-        maxSeq :+= m
-        seqTd = seqTd.filterNot(s=> s._1 == m._1 && s._2 == m._2)
-      case _ =>
-        // 種類が違うのがあるか
-        seqTd.find(s=> maxSeq.find(m=> s._1 != m._1).isDefined) match {
-          case Some(v) =>
-            val variableCount = maxSeq.map(_._1).distinct.size
-            val nextVariableCount = variableCount + 1
-            if ( (nextVariableCount * nextVariableCount - variableCount * variableCount) >= seqTd(0)._2 ) {
-              maxSeq :+= v
-              seqTd = seqTd.filterNot(s=> s._1 == v._1 && s._2 == v._2)
-            } else {
-              maxSeq :+= seqTd(0)
-              seqTd = seqTd.filterNot(s=> s._1 == seqTd(0)._1 && s._2 == seqTd(0)._2)
-            }
-          case _ =>
-            maxSeq :+= seqTd(0)
-            seqTd = seqTd.filterNot(s=> s._1 == seqTd(0)._1 && s._2 == seqTd(0)._2)
-        }
-    }
+    // そのなかで最小ポイント
+    val lowestPoint = maxSeq.filter{ m =>
+      duplicateKindKeySeq.exists(m._1)
+    }.sortBy(_._2)(0)
+    // 
+  
   }
   println(calculatePoint(maxSeq))
+  
 }
