@@ -23,34 +23,40 @@ object DVariousSushi extends App {
   }
   // ポイントでソート
   seqTd = seqTd.sortBy(_._2).reverse
-  var maxSeq = Seq.empty[(Int, Int)]]
+  var maxSeq = Seq.empty[(Int, Int)]
   
   // まずは最大値ポイントでリストを作成
   for(i<-0 to k - 1){
-    maxSeq = m +: seqTd(0)
+    maxSeq = seqTd(0) +: maxSeq
     seqTd =  seqTd.tail
   }
   var maxPoint = calculatePoint(maxSeq)
   
   // 種類が違うリストを作る。
-  differenceKindSeq = seqTd.filter(s =>
+  val differenceKindSeq = seqTd.filter(s =>
     maxSeq.find(_._1 == s._1).isEmpty
   )
   differenceKindSeq.sortBy(_._2).reverse
   
   val b = new Breaks
-  
-  differenceKindSeq.foreach { ds =>
-    // 同種類が2レコード以上の種類リスト
-    val duplicateKindKeySeq = maxSeq.groupBy(_._1).map(dm =>
-      
-    
-    )
-    // そのなかで最小ポイント
-    val lowestPoint = maxSeq.filter{ m =>
-      duplicateKindKeySeq.exists(m._1)
-    }.sortBy(_._2)(0)
-    // 
+
+  b.breakable{
+    differenceKindSeq.foreach { ds =>
+      // 同種類が2レコード以上の種類リスト
+      val duplicateKindKeyMap = maxSeq.groupBy(_._1)
+      val duplicateKindKeySeq = duplicateKindKeyMap.filter(_._2.size > 1).map(_._2).flatten.toSeq.sortBy(_._2)
+      if (duplicateKindKeySeq.isEmpty) {
+        b.break()
+      } else {
+        // そのなかで最小ポイント
+        val lowestPointTurple = duplicateKindKeySeq
+        // 違う種類の中で最大ポイント
+        val differentKindSeq = seqTd.filter(f=> duplicateKindKeySeq.exists(_._1 != f._1)).sortBy(_._2)
+
+      }
+
+  }
+
   
   }
   println(calculatePoint(maxSeq))
