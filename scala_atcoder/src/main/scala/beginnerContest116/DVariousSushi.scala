@@ -48,17 +48,25 @@ object DVariousSushi extends App {
       if (duplicateKindKeySeq.isEmpty) {
         b.break()
       } else {
-        // そのなかで最小ポイント
-        val lowestPointTurple = duplicateKindKeySeq
         // 違う種類の中で最大ポイント
-        val differentKindSeq = seqTd.filter(f=> duplicateKindKeySeq.exists(_._1 != f._1)).sortBy(_._2)
-
+        val differentKindSeq = seqTd.filter(f=> duplicateKindKeySeq.exists(_._1 != f._1)).sortBy(_._2).reverse
+        if (differentKindSeq.isEmpty) {
+          b.break()
+        } else {
+          // 最小ポイントを除く
+          var maxSeqTemp = maxSeq.filterNot(s => s._1 == duplicateKindKeySeq(0)._1 && s._2 == duplicateKindKeySeq(0)._2)
+          // 最大ポイントをたす
+          maxSeqTemp = differentKindSeq(0) +: maxSeqTemp
+          val pointTemp = calculatePoint(maxSeqTemp)
+          if(maxPoint < pointTemp) {
+            maxPoint = pointTemp
+            maxSeq = maxSeqTemp
+            seqTd = seqTd.filterNot(s => s._1 == differentKindSeq(0)._1 && s._2 == differentKindSeq(0)._2)
+          }
+        }
       }
-
+    }
   }
-
-  
-  }
-  println(calculatePoint(maxSeq))
+  println(maxPoint)
   
 }
