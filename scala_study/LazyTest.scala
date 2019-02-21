@@ -54,3 +54,19 @@ object LazyTest{
 
 }
 
+object LazyExplain{
+  def main() = {
+    var test1 = 1
+    var test2 = 2
+    lazy val lazyTestSum = test1 + test2
+
+    test1 = 3
+    // この時点で評価
+    println(s"lazyTestSum:${lazyTestSum}")
+
+    test1 = 5
+    // 一度評価されたら変わらない
+    println(s"lazyTestSum:${lazyTestSum}")
+
+  }
+}
