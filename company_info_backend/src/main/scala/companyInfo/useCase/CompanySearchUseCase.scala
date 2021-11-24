@@ -36,11 +36,11 @@ object CompanySearchUseCase {
               if (res._2 == 0) {
                 initialRes.byNpmrSortCompanies = companyResponses
               } else if (res._2 == 1) {
-                initialRes.byEquityRatioCompanies = companyResponses
-              } else if (res._2 == 2) {
                 initialRes.byRoaCompanies = companyResponses
-              } else {
+              } else if (res._2 == 2) {
                 initialRes.byRoeCompanies = companyResponses
+              } else {
+                initialRes.byEquityRatioCompanies = companyResponses
               }
             }
             case Left(ex) => exceptionSeq :+= ex
