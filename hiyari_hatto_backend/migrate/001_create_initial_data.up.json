@@ -1,0 +1,66 @@
+[
+  {
+    "createIndexes": "hiyari_hatto_post",
+    "indexes": [
+      {
+        "key": {
+          "title": 1
+        },
+        "name": "title",
+        "background": true
+      },
+      {
+        "key": {
+          "post_user_id": 1
+        },
+        "name": "post_user_id",
+        "background": true
+      },
+      {
+        "key": {
+          "post_date": -1
+        },
+        "name": "post_date"
+      },
+      {
+        "key": {
+          "categories": 1
+        },
+        "name": "categories_index",
+        "background": true
+      }
+    ]
+  },
+  {
+    "createIndexes": "hiyari_hatto_category",
+    "indexes": [
+      {
+        "key": {
+          "name": 1
+        },
+        "name": "name",
+        "background": true
+      },
+      {
+        "key": {
+          "register_user_id": 1
+        },
+        "name": "register_user_id",
+        "background": true
+      }
+    ]
+  },
+  {
+    "createIndexes": "user",
+    "indexes": [
+      {
+        "key": {
+          "google_id": 1
+        },
+        "name": "google_id",
+        "unique": true,
+        "background": true
+      }
+    ]
+  }
+]
