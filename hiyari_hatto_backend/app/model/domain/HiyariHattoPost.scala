@@ -1,14 +1,28 @@
 package model.domain
 
 import org.joda.time.DateTime
+import repository.HiyariHattoPostRepository
 
-import java.io.File
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
+object HiyariHattoPost {
 
+  def createPost(title: String,
+                 detail: Option[String],
+                 userId: String,
+                 categoryIds: Seq[String],
+                 occurDateTime: Option[DateTime],
+                 referenceUrls: Seq[HiyariHattoReferenceUrl],
+                 referenceFiles: Seq[HiyariHattoReferenceFile]): Option[HiyariHattoPost] = {
+    HiyariHattoPostRepository.insertPost(
+      title, detail, userId, categoryIds, occurDateTime, referenceUrls, referenceFiles
+    ).collect(_.transferToDomainModel())
+  }
+
+}
 case class HiyariHattoPost(id: String = "",
                            title: String = "",
+                           detail: Option[String] = None,
+                           userId: String,
                            categoryIds: Seq[String] = Seq.empty,
-                           occurDateTime: DateTime,
-                           referenceUrls: Seq[ReferenceUrl] = Seq.empty,
-                           referenceImages: Seq[ReferenceImage] = Seq.empty)
+                           occurDateTime: Option[DateTime] = None,
+                           referenceUrls: Seq[HiyariHattoReferenceUrl] = Seq.empty,
+                           referenceFiles: Seq[HiyariHattoReferenceFile] = Seq.empty)

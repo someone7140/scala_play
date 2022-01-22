@@ -1,29 +1,52 @@
 package controllers
 
 import model.api.hiyariHatto.HiyariHattoCategoryListResponse
+import org.joda.time.DateTimeZone
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 
 import javax.inject._
 import play.api.mvc._
+import useCase.{GoogleCloudStorageUseCase, HiyariHattoUseCase}
 
 @Singleton
-class HiyariHattoController @Inject()(val controllerComponents: ControllerComponents) extends BaseController with I18nSupport {
+class HiyariHattoController @Inject()(val controllerComponents: ControllerComponents, val env: play.api.Environment) extends BaseController with I18nSupport {
 
   import model.api.hiyariHatto.HiyariHattoCategoryCreateRequest.hiyariHattoCategoryCreateRequestForm
   import model.api.hiyariHatto.HiyariHattoCategoryDeleteRequest.hiyariHattoCategoryDeleteRequestForm
   import model.api.hiyariHatto.HiyariHattoCategoryUpdateRequest.hiyariHattoCategoryUpdateRequestForm
-  import model.api.hiyariHatto.HiyariHattoPostRegsiterRequest.hiyariHattoRegsiterRequestForm
+  import model.api.hiyariHatto.HiyariHattoPostCreateRequest.hiyariHattoPostCreateRequestForm
   import useCase.AuthUserUseCase.withUser
   import useCase.HiyariHattoUseCase._
 
   def createPost() = Action(parse.multipartFormData) { implicit request =>
-    hiyariHattoRegsiterRequestForm.bindFromRequest().fold(
-      errors => BadRequest(errors.errorsAsJson),
-      form => {
-        Ok("Hello")
-      }
-    )
+    withUser { authUser => {
+      hiyariHattoPostCreateRequestForm.bindFromRequest().fold(
+        errors => BadRequest(errors.errorsAsJson),
+        form => {
+          val imageUploadResult =
+            GoogleCloudStorageUseCase.uploadFilesToGcs(request.body.files, form.referenceFileTitles, env)
+          imageUploadResult.fold(
+            e => InternalServerError(e.getMessage()),
+            images => {
+              HiyariHattoUseCase.createHiyariHattoPost(
+                form.title,
+                form.detail,
+                authUser.id,
+                form.categoryIds,
+                form.occurDateTime.map(d => d.withZone(DateTimeZone.UTC)),
+                form.referenceUrls,
+                images
+              ).fold(InternalServerError("Failed create"))(_ => Ok)
+            })
+        }
+      )
+    }
+    }
+  }
+
+  def listPost() = Action { implicit request: Request[AnyContent] =>
+    Ok("Hello")
   }
 
   def createCategory() = Action { implicit request: Request[AnyContent] =>
@@ -76,7 +99,4 @@ class HiyariHattoController @Inject()(val controllerComponents: ControllerCompon
     }
   }
 
-  def list() = Action { implicit request: Request[AnyContent] =>
-    Ok("Hello")
-  }
 }

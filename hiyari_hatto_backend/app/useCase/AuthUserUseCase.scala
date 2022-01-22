@@ -49,8 +49,7 @@ object AuthUserUseCase {
     AuthUser.updateDBByGoogleUser(userInfo)
   }
 
-  def withUser[T](block: AuthUser => Result)(implicit request: Request[AnyContent]): Result = {
-
+  def withUser[T](block: AuthUser => Result)(implicit request: Request[Any]): Result = {
     val authTokenOpt = request.headers.get("Authorization")
     authTokenOpt
       .flatMap(token => {

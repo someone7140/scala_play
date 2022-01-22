@@ -16,6 +16,7 @@ libraryDependencies += "com.typesafe.play" %% "play-joda-forms" % "2.8.8"
 libraryDependencies += "com.typesafe.play" %% "play-json-joda" % "2.10.0-RC5"
 libraryDependencies += "joda-time" % "joda-time" % "2.10.13"
 libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.4.0"
+libraryDependencies += "commons-io" % "commons-io" % "2.11.0"
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
 
 // Adds additional packages into Twirl

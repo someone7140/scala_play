@@ -18,9 +18,9 @@
       },
       {
         "key": {
-          "post_date": -1
+          "occur_date": -1
         },
-        "name": "post_date"
+        "name": "occur_date"
       },
       {
         "key": {

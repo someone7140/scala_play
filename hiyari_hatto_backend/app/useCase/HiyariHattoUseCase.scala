@@ -1,7 +1,8 @@
 package useCase
 
 import model.api.hiyariHatto.HiyariHattoCategoryCreateRequest
-import model.domain.{AuthUser, HiyariHattoCategory}
+import model.domain.{AuthUser, HiyariHattoCategory, HiyariHattoPost, HiyariHattoReferenceFile, HiyariHattoReferenceUrl}
+import org.joda.time.DateTime
 
 object HiyariHattoUseCase {
 
@@ -21,5 +22,18 @@ object HiyariHattoUseCase {
 
   def listHiyariHattoCategory(userId: String): Seq[HiyariHattoCategory] = {
     HiyariHattoCategory.getCategoryList(userId)
+  }
+
+  def createHiyariHattoPost(title: String,
+                            detail: Option[String],
+                            userId: String,
+                            categoryIds: Seq[String],
+                            occurDateTime: Option[DateTime],
+                            referenceUrls: Seq[HiyariHattoReferenceUrl],
+                            referenceImages: Seq[HiyariHattoReferenceFile]
+                           ): Option[HiyariHattoPost] = {
+    HiyariHattoPost.createPost(
+      title, detail, userId, categoryIds, occurDateTime, referenceUrls, referenceImages
+    )
   }
 }
