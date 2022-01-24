@@ -17,6 +17,10 @@ object HiyariHattoPost {
     ).collect(_.transferToDomainModel())
   }
 
+  def getPostList(userId: String): Seq[HiyariHattoPost] = {
+    HiyariHattoPostRepository.getPostList(userId).collect(_.transferToDomainModel())
+  }
+
 }
 case class HiyariHattoPost(id: String = "",
                            title: String = "",

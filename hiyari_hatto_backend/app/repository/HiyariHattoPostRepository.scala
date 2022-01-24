@@ -3,6 +3,8 @@ package repository
 import model.db.{HiyariHattoPostCollection, HiyariHattoReferenceFileForCollection, HiyariHattoReferenceUrlForCollection}
 import model.domain.{HiyariHattoReferenceFile, HiyariHattoReferenceUrl}
 import org.joda.time.{DateTime, DateTimeZone}
+import org.mongodb.scala.model.Filters.equal
+import org.mongodb.scala.model.Sorts.descending
 import org.mongodb.scala.{Document, MongoCollection}
 import play.api.libs.json.Json
 
@@ -57,5 +59,22 @@ object HiyariHattoPostRepository {
         }
       }
     executeCmd(POST_COLLECTION, insertPostFunc).collectFirst(_ => postCollection)
+  }
+
+  def getPostList(userId: String): Seq[HiyariHattoPostCollection] = {
+    val getPostListFunc: MongoCollection[Document] => Seq[Document] =
+      (col: MongoCollection[Document]) => {
+        col.find(equal("post_user_id", userId))
+          .sort(descending("occur_date"))
+          .limit(200)
+          .results
+      }
+    val resultDocs = executeCmd(POST_COLLECTION, getPostListFunc)
+
+    for {
+      doc <- resultDocs
+      col <- Json.parse(doc.toJson()).validate[HiyariHattoPostCollection].asOpt
+    } yield col
+
   }
 }

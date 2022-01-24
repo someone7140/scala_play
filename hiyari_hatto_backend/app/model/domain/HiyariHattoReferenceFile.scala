@@ -4,6 +4,7 @@ import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.storage.{BlobId, BlobInfo, StorageOptions}
 import com.typesafe.config.ConfigFactory
 import org.apache.commons.io.FilenameUtils
+import play.api.libs.json.Json
 
 import java.io.File
 import java.nio.file.{Files, Paths}
@@ -11,6 +12,10 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 object HiyariHattoReferenceFile {
+
+  implicit val jsonWrites = Json.writes[HiyariHattoReferenceFile]
+  implicit val jsonReads = Json.reads[HiyariHattoReferenceFile]
+
   val config = ConfigFactory.load()
 
   // ファイルをGCSにアップロードしてクラスを取得

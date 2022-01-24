@@ -36,4 +36,8 @@ object HiyariHattoUseCase {
       title, detail, userId, categoryIds, occurDateTime, referenceUrls, referenceImages
     )
   }
+
+  def listHiyariHattoPost(userId: String): Seq[HiyariHattoPost] = {
+    HiyariHattoPost.getPostList(userId)
+  }
 }

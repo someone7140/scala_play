@@ -1,13 +1,13 @@
 package controllers
 
-import model.api.hiyariHatto.HiyariHattoCategoryListResponse
+import model.api.hiyariHatto.{HiyariHattoCategoryListResponse, HiyariHattoPostListResponse}
 import org.joda.time.DateTimeZone
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 
 import javax.inject._
 import play.api.mvc._
-import useCase.{GoogleCloudStorageUseCase, HiyariHattoUseCase}
+import useCase.GoogleCloudStorageUseCase
 
 @Singleton
 class HiyariHattoController @Inject()(val controllerComponents: ControllerComponents, val env: play.api.Environment) extends BaseController with I18nSupport {
@@ -29,7 +29,7 @@ class HiyariHattoController @Inject()(val controllerComponents: ControllerCompon
           imageUploadResult.fold(
             e => InternalServerError(e.getMessage()),
             images => {
-              HiyariHattoUseCase.createHiyariHattoPost(
+              createHiyariHattoPost(
                 form.title,
                 form.detail,
                 authUser.id,
@@ -46,7 +46,22 @@ class HiyariHattoController @Inject()(val controllerComponents: ControllerCompon
   }
 
   def listPost() = Action { implicit request: Request[AnyContent] =>
-    Ok("Hello")
+    withUser { authUser => {
+      val posts = listHiyariHattoPost(authUser.id).map(p => {
+        HiyariHattoPostListResponse(
+          p.id,
+          p.title,
+          p.detail,
+          p.userId,
+          p.categoryIds,
+          p.occurDateTime,
+          p.referenceUrls,
+          p.referenceFiles
+        )
+      })
+      Ok(Json.toJson(posts))
+    }
+    }
   }
 
   def createCategory() = Action { implicit request: Request[AnyContent] =>
