@@ -14,13 +14,13 @@ object GoogleCloudStorageUseCase {
   // 複数ファイルをGCSにアップロードする
   def uploadFilesToGcs(
                         files: Seq[MultipartFormData.FilePart[Files.TemporaryFile]],
-                        referenceImageTitles: Seq[String],
+                        referenceFiles: Seq[HiyariHattoReferenceFile],
                         env: play.api.Environment): Either[Throwable, Seq[HiyariHattoReferenceFile]] = {
     val futureSeq = Future.sequence(files.zipWithIndex.map(f => {
       HiyariHattoReferenceFile.uploadFileToGcsFuture(
         f._1.ref.path.toFile,
         f._1.filename,
-        referenceImageTitles(f._2),
+        referenceFiles(f._2),
         env
       )
     }))

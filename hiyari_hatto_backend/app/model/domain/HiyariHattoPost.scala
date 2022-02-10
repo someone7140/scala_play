@@ -17,8 +17,29 @@ object HiyariHattoPost {
     ).collect(_.transferToDomainModel())
   }
 
+  def updatePost(id: String,
+                 title: String,
+                 detail: Option[String],
+                 userId: String,
+                 categoryIds: Seq[String],
+                 occurDateTime: Option[DateTime],
+                 referenceUrls: Seq[HiyariHattoReferenceUrl],
+                 referenceFiles: Seq[HiyariHattoReferenceFile]): Option[HiyariHattoPost] = {
+    HiyariHattoPostRepository.updatePost(
+      id, title, detail, userId, categoryIds, occurDateTime, referenceUrls, referenceFiles
+    ).collect(_.transferToDomainModel())
+  }
+
+  def deletePost(id: String, userId: String): Boolean = {
+    HiyariHattoPostRepository.deletePost(id, userId)
+  }
+
   def getPostList(userId: String): Seq[HiyariHattoPost] = {
     HiyariHattoPostRepository.getPostList(userId).collect(_.transferToDomainModel())
+  }
+
+  def getPostListById(id: String, userId: String): Option[HiyariHattoPost] = {
+    HiyariHattoPostRepository.getPostById(id, userId).map(_.transferToDomainModel())
   }
 
 }

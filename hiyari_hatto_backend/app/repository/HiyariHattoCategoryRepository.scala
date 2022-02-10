@@ -59,7 +59,7 @@ object HiyariHattoCategoryRepository {
   }
 
   def deleteCategory(id:String, userId: String): Boolean = {
-    val updateCategoryByIdFunc: MongoCollection[Document] => Seq[Document] =
+    val deleteCategoryByIdFunc: MongoCollection[Document] => Seq[Document] =
       (col: MongoCollection[Document]) => {
         val results = col.deleteOne(
           and(equal("_id", id), equal("register_user_id", userId))
@@ -70,7 +70,7 @@ object HiyariHattoCategoryRepository {
           Seq(Document())
         }
       }
-    executeCmd(CATEGORY_COLLECTION, updateCategoryByIdFunc).collectFirst(_ => true).getOrElse(false)
+    executeCmd(CATEGORY_COLLECTION, deleteCategoryByIdFunc).collectFirst(_ => true).getOrElse(false)
   }
 
   def getCategoryList(userId: String): Seq[HiyariHattoCategoryCollection] = {

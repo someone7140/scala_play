@@ -1,6 +1,7 @@
 package controllers
 
 import model.api.hiyariHatto.{HiyariHattoCategoryListResponse, HiyariHattoPostListResponse}
+import model.domain.{HiyariHattoPost, HiyariHattoReferenceFile}
 import org.joda.time.DateTimeZone
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -16,6 +17,8 @@ class HiyariHattoController @Inject()(val controllerComponents: ControllerCompon
   import model.api.hiyariHatto.HiyariHattoCategoryDeleteRequest.hiyariHattoCategoryDeleteRequestForm
   import model.api.hiyariHatto.HiyariHattoCategoryUpdateRequest.hiyariHattoCategoryUpdateRequestForm
   import model.api.hiyariHatto.HiyariHattoPostCreateRequest.hiyariHattoPostCreateRequestForm
+  import model.api.hiyariHatto.HiyariHattoPostDeleteRequest.hiyariHattoPostDeleteRequestForm
+  import model.api.hiyariHatto.HiyariHattoPostUpdateRequest.hiyariHattoPostUpdateRequestForm
   import useCase.AuthUserUseCase.withUser
   import useCase.HiyariHattoUseCase._
 
@@ -25,7 +28,10 @@ class HiyariHattoController @Inject()(val controllerComponents: ControllerCompon
         errors => BadRequest(errors.errorsAsJson),
         form => {
           val imageUploadResult =
-            GoogleCloudStorageUseCase.uploadFilesToGcs(request.body.files, form.referenceFileTitles, env)
+            GoogleCloudStorageUseCase.uploadFilesToGcs(
+              request.body.files,
+              form.referenceFileTitles.map(title => HiyariHattoReferenceFile(title = title)),
+              env)
           imageUploadResult.fold(
             e => InternalServerError(e.getMessage()),
             images => {
@@ -39,6 +45,45 @@ class HiyariHattoController @Inject()(val controllerComponents: ControllerCompon
                 images
               ).fold(InternalServerError("Failed create"))(_ => Ok)
             })
+        }
+      )
+    }
+    }
+  }
+
+  def updatePost() = Action(parse.multipartFormData) { implicit request =>
+    withUser { authUser => {
+      hiyariHattoPostUpdateRequestForm.bindFromRequest().fold(
+        errors => BadRequest(errors.errorsAsJson),
+        form => {
+          // 変更前のpost
+          val registeredPost = HiyariHattoPost.getPostListById(form.id, authUser.id)
+          registeredPost.fold(BadRequest("Not Found Post"))(post => {
+            updateHiyariHattoPost(
+              post,
+              form.title,
+              form.detail,
+              form.categoryIds,
+              form.occurDateTime,
+              form.referenceUrls,
+              form.referenceFileInfos,
+              request.body.files,
+              authUser.id,
+              env
+            ).fold(InternalServerError("Failed update"))(_ => Ok)
+          })
+        }
+      )
+    }
+    }
+  }
+
+  def deletePost() = Action { implicit request: Request[AnyContent] =>
+    withUser { authUser => {
+      hiyariHattoPostDeleteRequestForm.bindFromRequest().fold(
+        errors => BadRequest(errors.errorsAsJson),
+        form => {
+          if (deleteHiyariHattoPost(form.id, authUser.id, env)) Ok else InternalServerError("Failed delete")
         }
       )
     }

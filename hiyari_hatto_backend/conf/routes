@@ -13,6 +13,8 @@ GET     /hiyariHatto/listCategory      controllers.HiyariHattoController.listCat
 
 POST    /hiyariHatto/createPost        controllers.HiyariHattoController.createPost()
 GET     /hiyariHatto/listPost          controllers.HiyariHattoController.listPost()
+POST    /hiyariHatto/updatePost        controllers.HiyariHattoController.updatePost()
+POST    /hiyariHatto/deletePost        controllers.HiyariHattoController.deletePost()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
